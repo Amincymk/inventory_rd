@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+@layer components{
+    .bodystyle{
+        @apply bg-blue-950 font-sans m-7 box-border p-0
+    }
+    .astyle{
+        @apply text-xl text-white uppercase hover:text-red-600 transition-colors cursor-pointer
+        
+    }
+    .buttonstyle{
+        @apply p-3 font-bold  text-white bg-sky-700 rounded-xl m-10
+        
+    }
+}
