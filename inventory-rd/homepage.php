@@ -1,0 +1,347 @@
+<?php
+require_once __DIR__ . '/../includes/auth_check.php';
+
+$allowedRoles = ['Admin'];
+require_once __DIR__ . '/../includes/role_check.php';
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+
+  <title>M | Smart Inventory Management</title>
+
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css"
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  >
+</head>
+<style type="text/tailwindcss">
+  @layer components {
+  .bodystyle {
+    background-color: #031533;
+    background-image: url("./assests/heroimg.png.png");
+  }
+
+  .astyle {
+    @apply px-4 py-2 font-semibold capitalize transition-colors rounded-lg;
+  }
+
+  .astyle:hover {
+    @apply text-sky-300;
+  }
+
+  .buttonstyle {
+    @apply px-6 py-3 font-semibold text-white transition-colors rounded-lg bg-sky-500;
+  }
+
+  .buttonstyle:hover {
+    @apply text-gray-200;
+  }
+
+  .card {
+    @apply rounded-xl bg-sky-800/40;
+  }
+}
+</style>
+
+<body class="min-h-screen text-white bg-center bg-no-repeat bg-cover bodystyle">
+
+  <!-- Header -->
+  <header class="sticky top-0 z-50 mb-3 rounded-full backdrop-blur-sm">
+    <nav class="px-6 py-4 mx-auto max-w-7xl">
+      <ul class="flex items-center justify-between text-center">
+        <li>
+          <a href="#home" class="astyle">Home</a>
+        </li>
+
+        <li>
+          <a href="login.php" class="astyle">Login</a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <main id="home" class="px-6 py-8 mx-auto mt-10 max-w-7xl">
+
+    <section class="grid items-center gap-8 md:grid-cols-2">
+
+      <!-- Hero Text -->
+      <div>
+        <h2 class="mb-4 text-sm font-bold tracking-widest text-sky-400">
+          SMART INVENTORY MANAGEMENT
+        </h2>
+
+        <h1 class="mb-5 text-3xl font-bold leading-tight md:text-5xl">
+          Manage Your Inventory.
+          Simplify Your Operations.
+        </h1>
+
+        <p class="max-w-xl leading-7 text-gray-200">
+          Keep track of products, monitor stock levels, record sales,
+          and manage your inventory efficiently, all from one simple
+          platform.
+        </p>
+
+        <div class="flex flex-wrap items-center gap-4 mt-8">
+
+          <a href="login.php" class="inline-block buttonstyle">
+            Get Started
+          </a>
+
+          <a href="#features"
+             class="hidden buttonstyle md:inline-block">
+            Explore Features
+          </a>
+
+        </div>
+      </div>
+
+      <!-- Mobile Hero Image -->
+      <div class="relative mt-4 md:hidden">
+
+        <img
+          src="./assests/heroimg.png.png"
+          alt="M inventory management dashboard"
+          class="object-cover w-full h-80 rounded-3xl"
+        >
+
+        <div class="absolute inset-0 flex items-center justify-center p-6 text-center rounded-3xl bg-black/40">
+
+          <p class="max-w-sm text-white">
+            <strong class="text-xl">
+              Ready to Take Control of Your Inventory?
+            </strong>
+
+            <span class="block mt-3 leading-7">
+              Start managing your products, tracking stock, and
+              monitoring sales from one organized platform.
+            </span>
+          </p>
+
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Statistics Cards -->
+  <section class="px-6 py-5 mx-auto max-w-7xl">
+
+    <div class="grid grid-cols-1 gap-6 p-6 opacity-0 rounded-2xl bg-sky-700 sm:grid-cols-2 lg:grid-cols-4">
+
+      <div class="flex flex-col gap-2 p-3 card rounded-xl">
+        <span class="text-sm text-white">Products Managed</span>
+        <span class="text-3xl font-bold text-gray-900">—</span>
+      </div>
+
+      <div class="flex flex-col gap-2 p-3 card rounded-xl">
+        <span class="text-sm text-white">Stock Items</span>
+        <span class="text-3xl font-bold text-gray-900">—</span>
+      </div>
+
+      <div class="flex flex-col gap-2 p-3 card rounded-xl">
+        <span class="text-sm text-white">Sales Recorded</span>
+        <span class="text-3xl font-bold text-gray-900">—</span>
+      </div>
+
+      <div class="flex flex-col gap-2 p-3 card rounded-xl">
+        <span class="text-sm text-white">Active Users</span>
+        <span class="text-3xl font-bold text-gray-900">—</span>
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- Features and Process -->
+  <section class="flex flex-col gap-6 px-6 py-5 mx-auto max-w-7xl">
+
+    <!-- Features -->
+    <div id="features" class="p-6 font-medium leading-8 rounded-2xl bg-sky-700 md:p-8">
+
+      <h2 class="mb-4 text-2xl font-bold md:text-3xl">
+        Everything You Need to Manage Your Stock
+      </h2>
+
+      <p class="mb-6">
+        Powerful tools designed to make inventory management easier,
+        faster, and more organized.
+      </p>
+
+      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+
+        <div>
+          <h3 class="font-bold">
+            <i class="mr-2 fa-solid fa-boxes-stacked"></i>
+            Product Management
+          </h3>
+          <p class="text-sky-50">
+            Add, update, categorize, and manage all your products
+            from one place.
+          </p>
+        </div>
+
+        <div>
+          <h3 class="font-bold">
+            <i class="mr-2 fa-solid fa-warehouse"></i>
+            Stock Monitoring
+          </h3>
+          <p class="text-sky-50">
+            Monitor available stock and quickly identify items
+            that need attention.
+          </p>
+        </div>
+
+        <div>
+          <h3 class="font-bold">
+            <i class="mr-2 fa-solid fa-chart-line"></i>
+            Sales Tracking
+          </h3>
+          <p class="text-sky-50">
+            Record sales transactions and maintain an accurate
+            history of business activities.
+          </p>
+        </div>
+
+        <div>
+          <h3 class="font-bold">
+            <i class="mr-2 fa-solid fa-bell"></i>
+            Low Stock Alerts
+          </h3>
+          <p class="text-sky-50">
+            Identify products that reach their minimum stock level.
+          </p>
+        </div>
+
+        <div>
+          <h3 class="font-bold">
+            <i class="mr-2 fa-solid fa-chart-pie"></i>
+            Reports &amp; Analytics
+          </h3>
+          <p class="text-sky-50">
+            Review inventory data and generate reports to support
+            better decisions.
+          </p>
+        </div>
+
+        <div>
+          <h3 class="font-bold">
+            <i class="mr-2 fa-solid fa-users"></i>
+            User Management
+          </h3>
+          <p class="text-sky-50">
+            Manage system users and control access to inventory
+            information.
+          </p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- How It Works -->
+    <div id="how-it-works" class="p-6 font-medium leading-8 rounded-2xl bg-sky-700 md:p-8">
+
+      <h2 class="mb-4 text-2xl font-bold md:text-3xl">
+        How It Works
+      </h2>
+
+      <p class="mb-6">
+        Manage Your Inventory in 3 Simple Steps
+      </p>
+
+      <div class="grid gap-6 md:grid-cols-3">
+
+        <div>
+          <span class="flex items-center justify-center w-10 h-10 mb-3 font-bold bg-white rounded-full text-sky-700">
+            1
+          </span>
+          <h3 class="font-bold">Add Your Products</h3>
+          <p class="text-sky-50">
+            Enter your products, categories, quantities, and other
+            relevant information.
+          </p>
+        </div>
+
+        <div>
+          <span class="flex items-center justify-center w-10 h-10 mb-3 font-bold bg-white rounded-full text-sky-700">
+            2
+          </span>
+          <h3 class="font-bold">Monitor Stock</h3>
+          <p class="text-sky-50">
+            Track stock movement as products are added, sold,
+            or updated.
+          </p>
+        </div>
+
+        <div>
+          <span class="flex items-center justify-center w-10 h-10 mb-3 font-bold bg-white rounded-full text-sky-700">
+            3
+          </span>
+          <h3 class="font-bold">Review Reports</h3>
+          <p class="text-sky-50">
+            Use reports and analytics to understand your inventory
+            and make better decisions.
+          </p>
+        </div>
+
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Footer -->
+  <footer class="mt-8 text-white bg-transparent rounded-full backdrop-blur-sm">
+
+    <div class="px-6 py-10 mx-auto max-w-7xl">
+
+      <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
+
+        <!-- Brand -->
+        <div>
+          <h2 class="text-2xl font-bold">M</h2>
+
+          <p class="mt-3 text-sky-100">
+            Simple and efficient inventory management for modern
+            businesses.
+          </p>
+        </div>
+
+        <!-- Links -->
+        <div>
+          <h3 class="mb-3 font-semibold">Quick Links</h3>
+
+          <ul class="space-y-2 text-sky-100">
+            <li><a href="#home" class="hover:text-white">Home</a></li>
+            <li><a href="#features" class="hover:text-white">Features</a></li>
+            <li><a href="#how-it-works" class="hover:text-white">How It Works</a></li>
+            <li><a href="login.php" class="hover:text-white">Login</a></li>
+          </ul>
+        </div>
+
+        <!-- Contact -->
+        <div>
+          <h3 class="mb-3 font-semibold">Contact</h3>
+
+          <p class="text-sky-100">support@m.com</p>
+          <p class="mt-2 text-sky-100">+234 800 000 0000</p>
+        </div>
+
+      </div>
+
+      <div class="pt-5 mt-8 text-sm text-center border-t border-sky-500 text-sky-100">
+        &copy; 2026 M. All rights reserved.
+      </div>
+
+    </div>
+  </footer>
+
+</body>
+</html>
+```

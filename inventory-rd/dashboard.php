@@ -1,0 +1,490 @@
+<?php
+require_once __DIR__ . '/includes/auth_check.php';
+require_once __DIR__ . '/includes/csrf.php';
+?>
+
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="csrf-token" content="<?= e(csrf_token()) ?>">
+
+    <title>Inventory Dashboard</title>
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              panel: "var(--panel)",
+              card: "var(--card)",
+              line: "var(--line)",
+              mut: "var(--muted)",
+              txt: "var(--text)",
+              inbg: "var(--inbg)",
+              inc: "var(--inc)",
+              inb: "var(--inb)",
+              th: "var(--th)",
+              thc: "var(--thc)",
+              tdl: "var(--tdl)",
+              bar: "var(--bar)",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      :root {
+        --panel: #10213b;
+        --card: #10213bdd;
+        --line: #294362;
+        --muted: #9bb0ca;
+        --text: #eef5ff;
+        --inbg: #091a30;
+        --inc: #eef5ff;
+        --inb: #294362;
+        --th: #142a46;
+        --thc: #c4d5ed;
+        --tdl: #223b58;
+        --bar: #0a1729;
+        color-scheme: dark;
+        box-sizing: border-box;
+        padding-top: env(safe-area-inset-top, 0px);
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+      }
+      html.light {
+        --panel: #fff;
+        --card: #ffffffd9;
+        --line: #afc1d8;
+        --muted: #557199;
+        --text: #102443;
+        --inbg: #f8fbff;
+        --inc: #182e4d;
+        --inb: #9fb6d6;
+        --th: #d9e6f6;
+        --thc: #213753;
+        --tdl: #cfdbeb;
+        --bar: #d9e4f2;
+        color-scheme: light;
+      }
+      html {
+        scroll-padding-top: env(safe-area-inset-top, 0px);
+      }
+      body {
+        margin: 0;
+        background: radial-gradient(ellipse at top, #142c4d, #071326 65%);
+        color: var(--text);
+        font:
+          14px/1.45 system-ui,
+          "Segoe UI",
+          sans-serif;
+      }
+      html.light body {
+        background: linear-gradient(135deg, #e8f1ff, #c8daf4);
+      }
+      .mainhead {
+        padding: 18px max(20px, calc((100vw - 1060px) / 2));
+      }
+      @media (max-width: 650px) {
+        .mainhead {
+          padding: 14px;
+        }
+      }
+    </style>
+    <style type="text/tailwindcss">
+      @layer components {
+        .btn {
+          @apply inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-line bg-[#193656] px-[13px] py-[9px] text-[#eef5ff] hover:brightness-125;
+        }
+        .btn-p {
+          @apply border-[#5691d7] bg-[#356fb8];
+        }
+        .act {
+          @apply mr-1 cursor-pointer rounded-lg border border-line bg-[#193656] px-2 py-[5px] text-xs text-[#eef5ff] hover:brightness-125;
+        }
+        .inp {
+          @apply w-full rounded-[7px] border border-inb bg-inbg p-2.5 text-inc outline-none focus:border-[#75a9f5];
+        }
+        .card {
+          @apply rounded-xl border border-line bg-card p-4;
+        }
+        .th {
+          @apply bg-th p-[11px] text-left text-[11px] font-bold text-thc;
+        }
+        .td {
+          @apply border-b border-tdl p-[11px] text-[13px];
+        }
+        .lbl {
+          @apply grid gap-[5px] text-xs text-mut;
+        }
+        .modal {
+          @apply fixed inset-0 z-[4] hidden place-items-center overflow-y-auto bg-[#000a] p-4;
+        }
+        .modal.open {
+          @apply grid;
+        }
+        .dialog {
+          @apply w-full max-w-[520px] rounded-[14px] border border-line bg-panel p-[22px] shadow-[0_20px_80px_#0009];
+        }
+        .nav {
+          @apply flex min-h-[62px] flex-col items-center justify-center gap-1 border-b border-[#6f8fbb] text-[#eef5ff] no-underline;
+        }
+        .nav span {
+          @apply text-[7px] font-bold min-[650px]:text-[9px];
+        }
+        .b {
+          @apply rounded-[20px] px-2 py-[3px] text-[11px];
+        }
+        .b-in {
+          @apply bg-[#123d36] text-[#43d39e];
+        }
+        .b-low {
+          @apply bg-[#453619] text-[#f2bd4b];
+        }
+        .b-out {
+          @apply bg-[#481f2a] text-[#f17878];
+        }
+      }
+    </style>
+
+  </head>
+  <body>
+    
+    <div class="flex min-h-screen">
+      <aside
+        class="flex w-[65px] shrink-0 flex-col border-r border-[#6f8fbb] bg-[#3c5c89] text-[#eef5ff] min-[650px]:w-32"
+      >
+        <div
+          class="grid h-24 place-items-center border-b border-[#6f8fbb] text-lg font-bold"
+        >
+          M
+        </div>
+        <nav class="grid">
+          <a
+            class="nav bg-white/15 shadow-[inset_3px_0_#dceaff]"
+            href="#overview"
+            ><svg
+              class="h-[19px] w-[19px]"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            >
+              <path d="M3 15a9 9 0 0 1 18 0M12 15l4-5" />
+              <circle cx="12" cy="15" r="1.5" /></svg
+            ><span>OVERVIEW</span></a
+          >
+          <a class="nav" href="#analysis"
+            ><svg
+              class="h-[19px] w-[19px]"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M3 3v18h18M7 15l4-5 4 3 5-7" /></svg
+            ><span>STOCK ANALYSIS</span></a
+          >
+          <a class="nav" href="#history"
+            ><svg
+              class="h-[19px] w-[19px]"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5M12 7v5l3 2" /></svg
+            ><span>MOVEMENT HISTORY</span></a
+          >
+          
+<form action="/inventory-rd/auth/logout.php" method="POST">
+    <input
+        type="hidden"
+        name="csrf_token"
+        value="<?= e(csrfToken()) ?>"
+    >
+
+    <button type="submit"
+            class="rounded-lg bg-red-600 px-4 py-2 text-white hover:bg-red-500">
+        Logout
+    </button>
+</form>
+
+        </nav>
+        <div
+          class="mt-auto border-t border-[#6f8fbb] px-[5px] py-5 text-center text-[7px] font-bold min-[650px]:text-[10px]"
+        >
+          MAIN<br />WAREHOUSE
+        </div>
+      </aside>
+      <div class="flex-1 min-w-0">
+        <header
+          class="flex flex-wrap items-center justify-end gap-5 border-b mainhead border-line"
+        >
+          <div class="mr-auto">
+            <h1 class="m-0 text-[19px] min-[650px]:text-[23px]">
+              Inventory Dashboard
+            </h1>
+            <div class="text-xs text-mut">Product control · Main Warehouse</div>
+          </div>
+          <div class="flex items-center gap-2.5">
+            <button
+              id="themeToggle"
+              class="btn h-[38px] w-[38px] justify-center !p-0"
+              type="button"
+              aria-label="Switch to light theme"
+              title="Switch to light theme"
+            ></button>
+            <button id="export" class="btn">Export File</button>
+          </div>
+        </header>
+        <main
+          id="overview"
+          class="mx-auto w-full max-w-[1100px] px-4 py-5 sm:px-6 lg:px-8"
+        >
+          <div
+            class="grid grid-cols-2 gap-2 mb-4 sm:grid-cols-4 lg:grid-cols-5"
+          >
+            <input
+              id="search"
+              class="inp !rounded-lg !px-3 !py-2"
+              placeholder="Search product or category…"
+              aria-label="Search products"
+            />
+            <select id="categoryFilter" class="inp !rounded-lg !px-3 !py-2">
+              <option value="">All categories</option>
+            </select>
+            <select id="statusFilter" class="inp !rounded-lg !px-3 !py-2">
+              <option value="">All stock statuses</option>
+              <option>In Stock</option>
+              <option>Low Stock</option>
+              <option>Out of Stock</option>
+            </select>
+            <button id="clear" class="justify-center btn">Clear filters</button>
+          </div>
+          <div
+            class="grid grid-cols-2 gap-3 mb-5 sm:grid-cols-3 xl:grid-cols-5"
+          >
+            <article class="card">
+              <div class="text-xs text-mut">Products</div>
+              <div id="mProducts" class="mt-2 text-2xl font-bold">0</div>
+            </article>
+            <article class="card">
+              <div class="text-xs text-mut">Units on hand</div>
+              <div id="mUnits" class="mt-2 text-2xl font-bold">0</div>
+            </article>
+            <article class="card">
+              <div class="text-xs text-mut">Low stock</div>
+              <div id="mLow" class="mt-2 text-2xl font-bold">0</div>
+            </article>
+            <article class="card">
+              <div class="text-xs text-mut">Out of stock</div>
+              <div id="mOut" class="mt-2 text-2xl font-bold">0</div>
+            </article>
+            <article class="card">
+              <div class="text-xs text-mut">Inventory value</div>
+              <div id="mValue" class="mt-2 text-2xl font-bold">₦0</div>
+            </article>
+          </div>
+          <div class="flex flex-wrap gap-2 mb-3">
+            <button id="add" class="btn btn-p">
+              <svg
+                class="h-3.5 w-3.5"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+                stroke-linecap="round"
+              >
+                <path d="M12 4v16M4 12h16" /></svg
+              >Add product
+            </button>
+            <button id="stockIn" class="btn">
+              <svg
+                class="h-3.5 w-3.5"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M12 4v16M5 13l7 7 7-7" /></svg
+              >Stock in
+            </button>
+            <button id="stockOut" class="btn">
+              <svg
+                class="h-3.5 w-3.5"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M12 20V4M5 11l7-7 7 7" /></svg
+              >Stock out
+            </button>
+          </div>
+          <section class="card mt-[18px]">
+            <h2 class="mb-3.5 text-base">
+              Products
+              <span id="resultCount" class="text-[11px] text-mut"></span>
+            </h2>
+            <div
+              class="mt-3 max-w-full overflow-x-auto rounded-[10px] border border-line"
+            >
+              <table class="w-full min-w-[650px] border-collapse">
+                <thead>
+                  <tr>
+                    <th class="th">Product</th>
+                    <th class="th">Category</th>
+                    <th class="th">Warehouse</th>
+                    <th class="th">Stock</th>
+                    <th class="th">Status</th>
+                    <th class="th">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="products"></tbody>
+              </table>
+            </div>
+          </section>
+          <div
+            id="analysis"
+            class="mt-[18px] grid grid-cols-1 gap-3.5 min-[851px]:grid-cols-[1.6fr_1fr] xl:grid-cols-2"
+          >
+            <article class="min-w-0 card">
+              <h2 class="mb-3.5 text-base">Stock by product</h2>
+              <div id="chart"></div>
+            </article>
+            <article id="history" class="min-w-0 card">
+              <h2 class="mb-3.5 text-base">Movement history</h2>
+              <div class="text-[11px] text-mut">
+                Most recent stock operations
+              </div>
+              <div
+                class="mt-3 max-h-80 overflow-auto rounded-[10px] border border-line"
+              >
+                <table class="w-full min-w-[400px] border-collapse">
+                  <thead>
+                    <tr>
+                      <th class="th">Date</th>
+                      <th class="th">Product</th>
+                      <th class="th">Type</th>
+                      <th class="th">Qty</th>
+                    </tr>
+                  </thead>
+                  <tbody id="movements"></tbody>
+                </table>
+              </div>
+            </article>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <div id="productModal" class="modal">
+      <form id="productForm" class="dialog">
+        <h2 id="productTitle" class="mb-3.5 text-base">Add product</h2>
+        <input type="hidden" name="id" />
+        <div class="grid gap-3 max-[480px]:grid-cols-1 grid-cols-2">
+          <label class="lbl"
+            >Product name<input class="inp" name="name" required maxlength="80"
+          /></label>
+          <label class="lbl"
+            >Category<input
+              class="inp"
+              name="category"
+              required
+              maxlength="50"
+              placeholder="e.g. Electronics"
+          /></label>
+          <label class="lbl"
+            >Unit price (₦)<input
+              class="inp"
+              name="price"
+              type="number"
+              min="0"
+              step="0.01"
+              required
+          /></label>
+          <label class="lbl"
+            >Starting stock<input
+              class="inp"
+              name="stock"
+              type="number"
+              min="0"
+              step="1"
+              required
+          /></label>
+          <label class="lbl"
+            >Reorder level<input
+              class="inp"
+              name="reorder"
+              type="number"
+              min="0"
+              step="1"
+              value="10"
+              required
+          /></label>
+          <label class="lbl"
+            >Warehouse<select class="inp" name="warehouse">
+              <option>Main Warehouse</option>
+            </select></label
+          >
+        </div>
+        <div class="flex justify-end gap-2 mt-4">
+          <button type="button" class="btn" data-close>Cancel</button
+          ><button class="btn btn-p">Save product</button>
+        </div>
+      </form>
+    </div>
+    <div id="moveModal" class="modal">
+      <form id="moveForm" class="dialog">
+        <h2 id="moveTitle" class="mb-3.5 text-base">Stock in</h2>
+        <div class="grid gap-3 max-[480px]:grid-cols-1 grid-cols-2">
+          <label class="lbl"
+            >Product<select class="inp" name="product" required></select
+          ></label>
+          <label class="lbl"
+            >Quantity<input
+              class="inp"
+              name="quantity"
+              type="number"
+              min="1"
+              step="1"
+              required
+          /></label>
+          <label class="lbl"
+            >Note (optional)<input
+              class="inp"
+              name="note"
+              maxlength="100"
+              placeholder="Purchase order, reason…"
+          /></label>
+        </div>
+        <div class="flex justify-end gap-2 mt-4">
+          <button type="button" class="btn" data-close>Cancel</button
+          ><button class="btn btn-p">Record movement</button>
+        </div>
+      </form>
+    </div>
+    <div
+      id="toast"
+      role="status"
+      class="pointer-events-none fixed bottom-[18px] right-[18px] z-[8] translate-y-3 rounded-lg bg-[#52729f] px-4 py-3 text-sm text-white opacity-0 transition"
+    ></div>
+
+    <script src="./dashboard.js"></script>
+  </body>
+</html>
